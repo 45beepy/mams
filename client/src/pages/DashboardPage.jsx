@@ -4,7 +4,7 @@ import { useAuth } from '/src/context/AuthContext.jsx';
 import NetMovementModal from '/src/components/NetMovementModal.jsx';
 import MetricCard from '/src/components/MetricCard.jsx';
 
-// Helper function to format date to YYYY-MM-DD
+// Helper function to format date to yyyy-MM-dd
 const formatDateToYYYYMMDD = (date) => {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -14,15 +14,14 @@ const formatDateToYYYYMMDD = (date) => {
 };
 
 export default function DashboardPage() {
-    const { user, loading: authLoading } = useAuth(); // Use authLoading from context
-    const [filters, setFilters] = useState(null); // Initialize filters as null
+    const { user, loading: authLoading } = useAuth();
+    const [filters, setFilters] = useState(null);
     const [filterOptions, setFilterOptions] = useState({ bases: [], equipmentTypes: [] });
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Effect to initialize filters once the user is available
     useEffect(() => {
         if (user) {
             setFilters({
@@ -44,7 +43,7 @@ export default function DashboardPage() {
     }, []);
 
     const fetchMetrics = useCallback(async () => {
-        if (!filters) return; // Don't fetch if filters aren't set yet
+        if (!filters) return;
         setLoading(true);
         setError('');
         try {
@@ -59,7 +58,7 @@ export default function DashboardPage() {
     }, [filters]);
 
     useEffect(() => {
-        if (filters) { // Only fetch data once filters are initialized
+        if (filters) {
             fetchFilterOptions();
             fetchMetrics();
         }
@@ -75,17 +74,17 @@ export default function DashboardPage() {
         fetchMetrics();
     };
 
-    // Render a loading state until authentication is checked and filters are set
     if (authLoading || !filters) {
         return <div className="text-center p-8">Loading Dashboard...</div>;
     }
 
     return (
         <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+            <div className="border-b border-gray-200 pb-5 mb-5">
+                 <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
+            </div>
             
-            {/* Filters */}
-            <form onSubmit={handleFilterSubmit} className="mt-4 p-4 bg-white rounded-lg shadow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            <form onSubmit={handleFilterSubmit} className="mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                 <div>
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
                     <input type="date" name="startDate" id="startDate" value={filters.startDate} onChange={handleFilterChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
@@ -110,24 +109,23 @@ export default function DashboardPage() {
                         {filterOptions.equipmentTypes.map(type => <option key={type.type_id} value={type.type_id}>{type.type_name}</option>)}
                     </select>
                 </div>
-                 <div className="lg:col-span-4 flex justify-end">
-                    <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Apply Filters</button>
+                 <div className="lg:col-span-1">
+                    <button type="submit" className="w-full inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Apply</button>
                 </div>
             </form>
 
-            {/* Metrics */}
             {loading ? (
-                <p className="mt-6 text-center">Loading metrics...</p>
+                <p className="mt-6 text-center text-gray-500">Loading metrics...</p>
             ) : error ? (
                 <p className="mt-6 text-center text-red-500">{error}</p>
             ) : metrics && (
-                <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     <MetricCard title="Opening Balance" value={metrics.openingBalance} />
                     <MetricCard title="Closing Balance" value={metrics.closingBalance} />
                     <MetricCard title="Net Movement" value={metrics.netMovement} isButton={true} onClick={() => setIsModalOpen(true)} />
                     <MetricCard title="Assigned" value={metrics.assigned} />
                     <MetricCard title="Expended" value={metrics.expended} />
-                </div>
+                </dl>
             )}
             
             <NetMovementModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} filters={filters} />

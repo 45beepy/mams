@@ -2,15 +2,12 @@ import { Fragment, useState, useEffect, useCallback } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import apiClient from '/src/api/axios.js';
 
-// Helper function to format date to a readable format like 'Jan 1, 2025'
 const formatDateToPPP = (dateString) => {
-    // The date from the filter is YYYY-MM-DD. Adding T00:00:00 helps avoid timezone issues.
     const date = new Date(dateString + 'T00:00:00'); 
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
 };
 
-// Helper function to format date and time like '2025-01-01 14:30'
 const formatDateTime = (dateString) => {
     const d = new Date(dateString);
     const year = d.getFullYear();
@@ -26,7 +23,7 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
   const [loading, setLoading] = useState(false);
 
   const fetchDetails = useCallback(async () => {
-    if (!isOpen) return;
+    if (!isOpen || !filters) return;
     setLoading(true);
     try {
       const response = await apiClient.get('/dashboard/net-movement-details', { params: filters });
@@ -63,7 +60,7 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-black/30 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -77,23 +74,25 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:p-6">
-                <div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                      Net Movement Details
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Showing Purchases, Transfers In, and Transfers Out from {filters ? formatDateToPPP(filters.startDate) : ''} to {filters ? formatDateToPPP(filters.endDate) : ''}.
-                      </p>
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                          Net Movement Details
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            Showing all relevant transactions from {filters ? formatDateToPPP(filters.startDate) : ''} to {filters ? formatDateToPPP(filters.endDate) : ''}.
+                          </p>
+                        </div>
                     </div>
                   </div>
                 </div>
-                <div className="mt-5 sm:mt-6">
+                <div className="px-4 py-5 sm:px-6">
                     {loading ? <p>Loading details...</p> : (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-300">
+                            <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
@@ -124,10 +123,10 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
                         </div>
                     )}
                 </div>
-                 <div className="mt-5 sm:mt-6">
+                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none sm:text-sm"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={() => setIsOpen(false)}
                   >
                     Close

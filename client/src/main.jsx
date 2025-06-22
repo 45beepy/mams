@@ -5,8 +5,6 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '/src/context/AuthContext.jsx';
 
-// This file should ONLY contain the rendering logic.
-// The App component itself is defined in App.jsx.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

@@ -7,8 +7,6 @@ import TransfersPage from '/src/pages/TransfersPage.jsx';
 import PurchasesPage from '/src/pages/PurchasesPage.jsx';
 import AssignmentsPage from '/src/pages/AssignmentsPage.jsx';
 
-// This is the main App component definition.
-// It should be in its own file, App.jsx.
 function App() {
   return (
     <Routes>

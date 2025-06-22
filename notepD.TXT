@@ -1,0 +1,1 @@
+postgresql://mams_database_user:ptTfeP4rsBUVQHT4wPrmS8KYygusg7DB@dpg-d1bth62dbo4c73cco8vg-a.singapore-postgres.render.com/mams_database
