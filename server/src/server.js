@@ -5,19 +5,23 @@ require('dotenv').config();
 // Route imports
 const authRoutes = require('./api/auth.routes.js');
 const dashboardRoutes = require('./api/dashboard.routes.js');
-const debugRoutes = require('./api/debug.routes.js'); // Import the new debug routes
+const assignmentsRoutes = require('./api/assignments.routes.js');
+const purchasesRoutes = require('./api/purchases.routes.js'); // New
+const transfersRoutes = require('./api/transfers.routes.js'); // New
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors()); // Configure this more securely for production
-app.use(express.json()); // To parse JSON bodies
+app.use(cors());
+app.use(express.json());
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/debug', debugRoutes); // Add the debug routes
+app.use('/api/assignments', assignmentsRoutes);
+app.use('/api/purchases', purchasesRoutes); // New
+app.use('/api/transfers', transfersRoutes); // New
 
 // Simple root route
 app.get('/', (req, res) => {
