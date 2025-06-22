@@ -7,7 +7,5 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [
-    // The @tailwindcss/forms plugin was removed as it's not in the new package.json
-  ],
+  plugins: [],
 }
