@@ -1,23 +1,17 @@
 const db = require('../config/db.js');
-const bcrypt = require('bcryptjs'); // Import bcrypt
+const bcrypt = require('bcryptjs');
 
 exports.seedDatabase = async (req, res) => {
     try {
-        // --- STEP 1: Generate the hash for 'password123' dynamically ---
-        console.log("Generating password hash...");
         const passwordHash = await bcrypt.hash('password123', 10);
-        console.log("Hash generated successfully.");
 
-        // --- STEP 2: Drop old tables and types ---
-        console.log("Dropping old tables and types...");
+        // Drop existing tables and types to ensure a clean slate
         await db.query(`
             DROP TABLE IF EXISTS asset_movements, assets, users, roles, bases, equipment_types CASCADE;
             DROP TYPE IF EXISTS movement_type;
         `);
-        console.log("Old tables and types dropped.");
 
-        // --- STEP 3: Recreate tables and types ---
-        console.log("Creating tables and types...");
+        // Recreate all tables and types
         await db.query(`
             CREATE TYPE movement_type AS ENUM ('purchase', 'transfer_in', 'transfer_out', 'assignment', 'expenditure', 'initial_stock');
             CREATE TABLE roles ( role_id SERIAL PRIMARY KEY, role_name VARCHAR(50) UNIQUE NOT NULL );
@@ -27,17 +21,14 @@ exports.seedDatabase = async (req, res) => {
             CREATE TABLE assets ( asset_id SERIAL PRIMARY KEY, name VARCHAR(100) NOT NULL, serial_number VARCHAR(100) UNIQUE, type_id INT NOT NULL REFERENCES equipment_types(type_id), current_base_id INT REFERENCES bases(base_id) );
             CREATE TABLE asset_movements ( movement_id SERIAL PRIMARY KEY, asset_id INT NOT NULL REFERENCES assets(asset_id), movement_type movement_type NOT NULL, quantity INT NOT NULL DEFAULT 1, from_base_id INT REFERENCES bases(base_id), to_base_id INT REFERENCES bases(base_id), assigned_to_user_id INT REFERENCES users(user_id), transaction_date TIMESTAMPTZ NOT NULL DEFAULT NOW(), notes TEXT );
         `);
-        console.log("Tables and types created.");
         
-        // --- STEP 4: Seed all data using the new hash ---
-        console.log("Seeding data...");
+        // Seed initial data
         await db.query(`
             INSERT INTO roles (role_name) VALUES ('Admin'), ('Base Commander'), ('Logistics Officer');
             INSERT INTO bases (base_name, location) VALUES ('Fort Courage', 'West Region'), ('Camp Victory', 'East Region'), ('Eagle Base', 'Central Command');
             INSERT INTO equipment_types (type_name) VALUES ('Vehicle'), ('Weapon'), ('Ammunition'), ('Communications');
         `);
-
-        // Use a parameterized query for the user insert to safely inject the hash
+        
         await db.query(
             `INSERT INTO users (username, password_hash, role_id, base_id) VALUES
              ('admin_user', $1, 1, NULL),
@@ -53,17 +44,31 @@ exports.seedDatabase = async (req, res) => {
             ('M4 Carbine', 'M4-102', 2, 2),
             ('5.56mm Rounds', NULL, 3, 1),
             ('Satellite Phone', 'SAT-50', 4, 2);
-
-            INSERT INTO asset_movements (asset_id, movement_type, quantity, to_base_id, transaction_date) VALUES
-            (1, 'initial_stock', 1, 1, '2023-01-01 10:00:00Z'),
-            (2, 'initial_stock', 1, 1, '2023-01-01 10:00:00Z'),
-            (3, 'initial_stock', 1, 2, '2023-01-01 10:00:00Z'),
-            (4, 'initial_stock', 5000, 1, '2023-01-01 10:00:00Z'),
-            (5, 'initial_stock', 1, 2, '2023-01-01 10:00:00Z');
         `);
-        console.log("Data seeded successfully.");
+        
+        // **FIX**: Use current timestamps for transactions so they appear in the default filter
+        await db.query(`
+            INSERT INTO asset_movements (asset_id, movement_type, quantity, to_base_id, transaction_date) VALUES
+            (1, 'initial_stock', 1, 1, NOW() - INTERVAL '20 day'),
+            (2, 'initial_stock', 1, 1, NOW() - INTERVAL '20 day'),
+            (3, 'initial_stock', 1, 2, NOW() - INTERVAL '20 day'),
+            (4, 'initial_stock', 5000, 1, NOW() - INTERVAL '20 day'),
+            (5, 'initial_stock', 1, 2, NOW() - INTERVAL '20 day');
 
-        res.status(200).send('Database seeded successfully! You can now log in.');
+            INSERT INTO asset_movements (asset_id, movement_type, quantity, to_base_id, transaction_date, notes) VALUES
+            (2, 'purchase', 5, 1, NOW() - INTERVAL '15 day', 'New batch of rifles');
+
+            INSERT INTO asset_movements (asset_id, movement_type, quantity, from_base_id, to_base_id, transaction_date, notes) VALUES
+            (2, 'transfer_out', 1, 1, 2, NOW() - INTERVAL '10 day', 'Transfer M4-101 to Camp Victory');
+            
+            INSERT INTO asset_movements (asset_id, movement_type, quantity, from_base_id, to_base_id, transaction_date, notes) VALUES
+            (2, 'transfer_in', 1, 1, 2, NOW() - INTERVAL '9 day', 'Received M4-101 from Fort Courage');
+
+            INSERT INTO asset_movements (asset_id, movement_type, quantity, from_base_id, transaction_date, notes) VALUES
+            (4, 'expenditure', 300, 1, NOW() - INTERVAL '5 day', 'Training exercise usage');
+        `);
+
+        res.status(200).send('Database seeded successfully with current dates! You can now log in.');
     } catch (error) {
         console.error('Error seeding database:', error);
         res.status(500).send('Failed to seed database. Check server logs.');
