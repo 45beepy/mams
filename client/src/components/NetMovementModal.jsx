@@ -90,8 +90,8 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
                   </div>
                 </div>
                 <div className="px-4 py-5 sm:px-6">
-                    {loading ? <p>Loading details...</p> : (
-                        <div className="overflow-x-auto">
+                    {loading ? <p className="text-center text-gray-500">Loading details...</p> : (
+                        <div className="overflow-x-auto rounded-lg border">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -104,7 +104,7 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {details.map((item) => (
+                                    {details.length > 0 ? details.map((item) => (
                                     <tr key={item.movement_id}>
                                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{formatDateTime(item.transaction_date)}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -117,7 +117,11 @@ export default function NetMovementModal({ isOpen, setIsOpen, filters }) {
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.from_base || 'N/A'}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.to_base || 'N/A'}</td>
                                     </tr>
-                                    ))}
+                                    )) : (
+                                        <tr>
+                                            <td colSpan="6" className="text-center py-10 text-gray-500">No movement history found for the selected filters.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

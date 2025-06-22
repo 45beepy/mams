@@ -6,8 +6,9 @@ require('dotenv').config();
 const authRoutes = require('./api/auth.routes.js');
 const dashboardRoutes = require('./api/dashboard.routes.js');
 const assignmentsRoutes = require('./api/assignments.routes.js');
-const purchasesRoutes = require('./api/purchases.routes.js'); // New
-const transfersRoutes = require('./api/transfers.routes.js'); // New
+const purchasesRoutes = require('./api/purchases.routes.js');
+const transfersRoutes = require('./api/transfers.routes.js');
+const debugRoutes = require('./api/debug.routes.js'); // Added this line
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,8 +21,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/assignments', assignmentsRoutes);
-app.use('/api/purchases', purchasesRoutes); // New
-app.use('/api/transfers', transfersRoutes); // New
+app.use('/api/purchases', purchasesRoutes);
+app.use('/api/transfers', transfersRoutes);
+app.use('/api/debug', debugRoutes); // Added this line
 
 // Simple root route
 app.get('/', (req, res) => {

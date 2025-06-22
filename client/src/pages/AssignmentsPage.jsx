@@ -18,7 +18,7 @@ export default function AssignmentsPage() {
     const [history, setHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [formState, setFormState] = useState({
-        movementType: 'assignment', // 'assignment' or 'expenditure'
+        movementType: 'assignment',
         asset_id: '',
         assigned_to_user_id: '',
         quantity: 1,
@@ -85,9 +85,8 @@ export default function AssignmentsPage() {
         try {
             await apiClient.post(endpoint, payload);
             setMessage({ type: 'success', content: 'Transaction recorded successfully.' });
-            // Reset form and refetch data
             setFormState({
-                movementType: 'assignment', asset_id: '', assigned_to_user_id: '', quantity: 1, notes: ''
+                movementType: formState.movementType, asset_id: '', assigned_to_user_id: '', quantity: 1, notes: ''
             });
             fetchData();
         } catch (error) {
@@ -170,8 +169,8 @@ export default function AssignmentsPage() {
 
                 <div className="lg:col-span-2">
                     <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-                        <h2 className="text-lg font-medium text-gray-900 mb-4">History</h2>
-                        <div className="overflow-x-auto">
+                        <h2 className="text-lg font-medium text-gray-900 mb-4">Assignment & Expenditure History</h2>
+                        <div className="overflow-x-auto rounded-lg border">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -182,7 +181,7 @@ export default function AssignmentsPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {history.map((item) => (
+                                     {history.length > 0 ? history.map((item) => (
                                     <tr key={item.movement_id}>
                                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{formatDateTime(item.transaction_date)}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -195,7 +194,11 @@ export default function AssignmentsPage() {
                                             {item.movement_type === 'assignment' ? `To: ${item.assigned_to}` : `Qty: ${item.quantity}`}
                                         </td>
                                     </tr>
-                                    ))}
+                                    )) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center py-10 text-gray-500">No assignment or expenditure history found.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

@@ -28,11 +28,11 @@ export default function PurchasesPage() {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            const [formDataRes, historyRes] = await Promise.all([
+            const [formDataRes, historyRes, basesRes] = await Promise.all([
                 apiClient.get('/purchases/form-data'),
-                apiClient.get('/purchases/history')
+                apiClient.get('/purchases/history'),
+                apiClient.get('/dashboard/filters')
             ]);
-            const basesRes = await apiClient.get('/dashboard/filters');
             setFormData({ assets: formDataRes.data.assets, bases: basesRes.data.bases });
             setHistory(historyRes.data);
         } catch (error) {
@@ -131,7 +131,7 @@ export default function PurchasesPage() {
                 <div className="lg:col-span-2">
                     <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
                         <h2 className="text-lg font-medium text-gray-900 mb-4">Purchase History</h2>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto rounded-lg border">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -142,14 +142,18 @@ export default function PurchasesPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {history.map((item, index) => (
+                                    {history.length > 0 ? history.map((item, index) => (
                                     <tr key={index}>
                                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{formatDateTime(item.transaction_date)}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.asset_name}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.quantity}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.to_base}</td>
                                     </tr>
-                                    ))}
+                                    )) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center py-10 text-gray-500">No purchase history found.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
