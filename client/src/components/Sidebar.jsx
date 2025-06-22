@@ -1,11 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '/src/context/AuthContext.jsx';
-// Corrected the import statement below by removing the "..."
-import { ChartBarIcon, ArrowRightLeftIcon, ShoppingCartIcon, UserGroupIcon, ArrowLeftOnRectangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ArrowsRightLeftIcon, ShoppingCartIcon, UserGroupIcon, ArrowRightStartOnRectangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: ChartBarIcon, roles: ['Admin', 'Base Commander', 'Logistics Officer'] },
-  { name: 'Transfers', href: '/transfers', icon: ArrowRightLeftIcon, roles: ['Admin', 'Logistics Officer'] },
+  { name: 'Transfers', href: '/transfers', icon: ArrowsRightLeftIcon, roles: ['Admin', 'Logistics Officer'] },
   { name: 'Purchases', href: '/purchases', icon: ShoppingCartIcon, roles: ['Admin', 'Logistics Officer'] },
   { name: 'Assignments', href: '/assignments', icon: UserGroupIcon, roles: ['Admin', 'Base Commander'] },
 ];
@@ -66,7 +65,7 @@ export default function Sidebar() {
                     onClick={handleLogout}
                     className="w-full group flex items-center justify-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
-                    <ArrowLeftOnRectangleIcon className="mr-3 h-6 w-6"/>
+                    <ArrowRightStartOnRectangleIcon className="mr-3 h-6 w-6"/>
                     Logout
                 </button>
             </div>
