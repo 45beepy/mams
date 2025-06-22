@@ -1,4 +1,4 @@
-// src/components/Sidebar.jsx
+
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '/src/context/AuthContext.jsx';
 

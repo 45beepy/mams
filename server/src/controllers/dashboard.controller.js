@@ -1,26 +1,24 @@
 const db = require('../config/db.js');
 
-// Helper to build the WHERE clause based on role and filters
+
 const buildWhereClause = (user, queryParams) => {
-    let whereClauses = ["1=1"]; // Start with a truthy value
+    let whereClauses = ["1=1"]; 
     let params = [];
     let paramIndex = 1;
 
-    // Role-based filtering
+ 
     if (user.role === 'Base Commander' || user.role === 'Logistics Officer') {
         whereClauses.push(`(am.to_base_id = $${paramIndex} OR am.from_base_id = $${paramIndex})`);
         params.push(user.baseId);
         paramIndex++;
     }
 
-    // Filter by Base (if Admin is choosing)
     if (user.role === 'Admin' && queryParams.baseId) {
         whereClauses.push(`(am.to_base_id = $${paramIndex} OR am.from_base_id = $${paramIndex})`);
         params.push(queryParams.baseId);
         paramIndex++;
     }
 
-    // Filter by Equipment Type
     if (queryParams.equipmentTypeId) {
         whereClauses.push(`a.type_id = $${paramIndex}`);
         params.push(queryParams.equipmentTypeId);
@@ -39,7 +37,6 @@ exports.getMetrics = async (req, res) => {
         const { startDate, endDate } = req.query;
         const { clause, params, paramIndex } = buildWhereClause(req.user, req.query);
 
-        // 1. Opening Balance (Total stock before start date)
         const openingBalanceQuery = `
             SELECT COALESCE(SUM(
                 CASE
@@ -55,7 +52,7 @@ exports.getMetrics = async (req, res) => {
         const openingResult = await db.query(openingBalanceQuery, [...params, startDate]);
         const openingBalance = parseInt(openingResult.rows[0].balance, 10);
 
-        // 2. Movements within the date range
+        
         const movementsQuery = `
             SELECT
                 SUM(CASE WHEN am.movement_type = 'purchase' THEN am.quantity ELSE 0 END) AS purchases,

@@ -4,7 +4,7 @@ import { useAuth } from '/src/context/AuthContext.jsx';
 import NetMovementModal from '/src/components/NetMovementModal.jsx';
 import MetricCard from '/src/components/MetricCard.jsx';
 
-// Helper function to format date to yyyy-MM-dd
+
 const formatDateToYYYYMMDD = (date) => {
     const d = new Date(date);
     const year = d.getFullYear();

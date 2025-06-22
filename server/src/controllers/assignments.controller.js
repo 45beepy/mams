@@ -1,17 +1,16 @@
 const db = require('../config/db.js');
 
-// Helper function to get the base ID for a query.
-// Admins can specify a base, otherwise it defaults to the user's own base.
+
 const getQueryBaseId = (user, query) => {
     return user.role === 'Admin' && query.baseId ? query.baseId : user.baseId;
 };
 
-// Get data for form dropdowns
+
 exports.getFormData = async (req, res) => {
     try {
         const baseId = getQueryBaseId(req.user, req.query);
 
-        // Fetch assets currently at the relevant base that are not already assigned to someone
+       
         const assetsQuery = `
             SELECT a.asset_id, a.name, a.serial_number FROM assets a
             LEFT JOIN (
@@ -23,7 +22,7 @@ exports.getFormData = async (req, res) => {
         `;
         const assetsResult = await db.query(assetsQuery, [baseId]);
 
-        // Fetch personnel (users) at the relevant base
+        
         const personnelResult = await db.query('SELECT user_id, username FROM users WHERE base_id = $1', [baseId]);
 
         res.json({
@@ -36,7 +35,7 @@ exports.getFormData = async (req, res) => {
     }
 };
 
-// Get history of assignments and expenditures
+
 exports.getHistory = async (req, res) => {
     try {
         const baseId = getQueryBaseId(req.user, req.query);
@@ -80,7 +79,7 @@ exports.createAssignment = async (req, res) => {
     }
 };
 
-// Record a new expenditure
+
 exports.createExpenditure = async (req, res) => {
     const { asset_id, quantity, notes } = req.body;
     try {

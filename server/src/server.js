@@ -23,14 +23,13 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/assignments', assignmentsRoutes);
 app.use('/api/purchases', purchasesRoutes);
 app.use('/api/transfers', transfersRoutes);
-app.use('/api/debug', debugRoutes); // Added this line
+app.use('/api/debug', debugRoutes); 
 
-// Simple root route
 app.get('/', (req, res) => {
   res.send('Military Asset Management System API is running.');
 });
 
-// Start the server
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

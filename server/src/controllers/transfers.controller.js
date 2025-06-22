@@ -2,9 +2,9 @@ const db = require('../config/db.js');
 
 exports.getFormData = async (req, res) => {
     try {
-        // Assets at the user's current base
+   
         const assets = await db.query('SELECT asset_id, name, serial_number FROM assets WHERE current_base_id = $1 ORDER BY name', [req.user.baseId]);
-        // All bases except the user's own
+       
         const bases = await db.query('SELECT base_id, base_name FROM bases WHERE base_id != $1 ORDER BY base_name', [req.user.baseId]);
         res.json({ assets: assets.rows, bases: bases.rows });
     } catch (error) {
@@ -40,19 +40,19 @@ exports.createTransfer = async (req, res) => {
     try {
         await client.query('BEGIN');
 
-        // 1. Record the 'transfer_out'
+  
         await client.query(
             "INSERT INTO asset_movements (asset_id, movement_type, quantity, from_base_id, to_base_id, notes) VALUES ($1, 'transfer_out', $2, $3, $4, $5)",
             [asset_id, quantity, from_base_id, to_base_id, notes]
         );
 
-        // 2. Record the 'transfer_in'
+     
         await client.query(
             "INSERT INTO asset_movements (asset_id, movement_type, quantity, from_base_id, to_base_id, notes) VALUES ($1, 'transfer_in', $2, $3, $4, $5)",
             [asset_id, quantity, from_base_id, to_base_id, notes]
         );
 
-        // 3. Update the asset's current location
+      
         await client.query('UPDATE assets SET current_base_id = $1 WHERE asset_id = $2', [to_base_id, asset_id]);
 
         await client.query('COMMIT');

@@ -5,13 +5,13 @@ exports.seedDatabase = async (req, res) => {
     try {
         const passwordHash = await bcrypt.hash('password123', 10);
 
-        // Drop existing tables and types to ensure a clean slate
+     
         await db.query(`
             DROP TABLE IF EXISTS asset_movements, assets, users, roles, bases, equipment_types CASCADE;
             DROP TYPE IF EXISTS movement_type;
         `);
 
-        // Recreate all tables and types
+       
         await db.query(`
             CREATE TYPE movement_type AS ENUM ('purchase', 'transfer_in', 'transfer_out', 'assignment', 'expenditure', 'initial_stock');
             CREATE TABLE roles ( role_id SERIAL PRIMARY KEY, role_name VARCHAR(50) UNIQUE NOT NULL );
@@ -46,7 +46,7 @@ exports.seedDatabase = async (req, res) => {
             ('Satellite Phone', 'SAT-50', 4, 2);
         `);
         
-        // **FIX**: Use current timestamps for transactions so they appear in the default filter
+        
         await db.query(`
             INSERT INTO asset_movements (asset_id, movement_type, quantity, to_base_id, transaction_date) VALUES
             (1, 'initial_stock', 1, 1, NOW() - INTERVAL '20 day'),
