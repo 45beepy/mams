@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '/src/context/AuthContext.jsx';
+// Corrected the import statement below by removing the "..."
 import { ChartBarIcon, ArrowRightLeftIcon, ShoppingCartIcon, UserGroupIcon, ArrowLeftOnRectangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const navigation = [
