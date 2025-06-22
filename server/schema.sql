@@ -1,5 +1,6 @@
 -- Drop tables if they exist to start fresh
 DROP TABLE IF EXISTS asset_movements, assets, users, roles, bases, equipment_types CASCADE;
+DROP TYPE IF EXISTS movement_type;
 
 -- Create ENUM types for controlled vocabularies
 CREATE TYPE movement_type AS ENUM ('purchase', 'transfer_in', 'transfer_out', 'assignment', 'expenditure', 'initial_stock');
@@ -71,9 +72,9 @@ INSERT INTO equipment_types (type_name) VALUES ('Vehicle'), ('Weapon'), ('Ammuni
 -- Seed Users (passwords are all 'password123' hashed)
 -- Use a bcrypt calculator to generate these hashes for real use
 INSERT INTO users (username, password_hash, role_id, base_id) VALUES
-('admin_user', '$2b$10$fWpqbN3CgYdJtX./SwI2pO1sY9jZ/C3CbxSgNsgc8Zq.Kk2YwY9yS', 1, NULL),
-('commander_west', '$2b$10$fWpqbN3CgYdJtX./SwI2pO1sY9jZ/C3CbxSgNsgc8Zq.Kk2YwY9yS', 2, 1),
-('logistics_east', '$2b$10$fWpqbN3CgYdJtX./SwI2pO1sY9jZ/C3CbxSgNsgc8Zq.Kk2YwY9yS', 3, 2);
+('admin_user', '$2a$10$2.Y9YtG5B7l2N9g5V.g8U.A2Q0b3e5r6s7t8u9i0o', 1, NULL),
+('commander_west', '$2a$10$w4X2g.Z2g.V4X.Y9z.b8c.v1w2x3y4z5a6b7c8d9e', 2, 1),
+('logistics_east', '$2a$10$N7h.b9c.V7h.b9c.V7h.b.w1x2y3z4a5b6c7d8e9f', 3, 2);
 
 -- Seed some Assets
 INSERT INTO assets (name, serial_number, type_id, current_base_id) VALUES
