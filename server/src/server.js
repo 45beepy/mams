@@ -5,7 +5,7 @@ require('dotenv').config();
 // Route imports
 const authRoutes = require('./api/auth.routes.js');
 const dashboardRoutes = require('./api/dashboard.routes.js');
-// Add other route imports here later (e.g., transfers, purchases)
+const debugRoutes = require('./api/debug.routes.js'); // Import the new debug routes
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -17,6 +17,7 @@ app.use(express.json()); // To parse JSON bodies
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/debug', debugRoutes); // Add the debug routes
 
 // Simple root route
 app.get('/', (req, res) => {
